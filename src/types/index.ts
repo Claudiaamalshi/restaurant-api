@@ -21,12 +21,13 @@ export enum PriceRange {
   EXPENSIVE = 'EXPENSIVE',
 }
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest<T = any> extends Request {
   user?: {
     id: string;
     email: string;
     role: UserRole;
   };
+  body: T;
 }
 
 export interface PaginationQuery {

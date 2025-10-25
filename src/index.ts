@@ -1,11 +1,16 @@
 import app from './app';
 import env from './config/env';
 import { connectDatabase, disconnectDatabase } from './config/database';
+import { setupSwagger } from './config/swagger';
+import './models'; // Import models to ensure they're registered
 
 const startServer = async (): Promise<void> => {
   try {
     // Connect to database
     await connectDatabase();
+
+    // Setup Swagger documentation
+    setupSwagger(app);
 
     // Start server
     const server = app.listen(env.PORT, () => {
@@ -15,6 +20,7 @@ const startServer = async (): Promise<void> => {
 ║  📍 Port: ${env.PORT}                        ║
 ║  🌍 Environment: ${env.NODE_ENV}       ║
 ║  📊 API Version: ${env.API_VERSION}              ║
+║  📚 Docs: /api-docs                    ║
 ╚════════════════════════════════════════╝
       `);
     });

@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import env from './config/env';
 import { errorHandler } from './middleware/error.middleware';
 import { notFoundHandler } from './middleware/notFound.middleware';
+import { apiLimiter } from './middleware/rateLimit.middleware';
+import authRoutes from './routes/auth.routes';
 
 const app: Application = express();
 
@@ -21,6 +23,9 @@ if (env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// Rate limiting
+app.use(apiLimiter);
+
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
@@ -31,12 +36,8 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// API routes will be added here
-// app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
-// app.use(`/api/${env.API_VERSION}/restaurants`, restaurantRoutes);
-// app.use(`/api/${env.API_VERSION}/menus`, menuRoutes);
-// app.use(`/api/${env.API_VERSION}/orders`, orderRoutes);
-// app.use(`/api/${env.API_VERSION}/reports`, reportRoutes);
+// API routes
+app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
 
 // Error handlers (must be last)
 app.use(notFoundHandler);
