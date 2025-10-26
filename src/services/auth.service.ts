@@ -24,6 +24,11 @@ export class AuthService {
     // Create user (password will be hashed in beforeCreate hook)
     const user = await User.create(data);
 
+    // Ensure user ID is populated
+    if (!user.id) {
+      await user.reload();
+    }
+
     // Generate tokens
     const tokens = await this.generateTokensForUser(user);
 

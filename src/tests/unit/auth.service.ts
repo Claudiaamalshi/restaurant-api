@@ -149,7 +149,6 @@ describe('AuthService Unit Tests', () => {
 
   describe('refreshAccessToken', () => {
     let refreshTokenString: string;
-    let userId: string;
 
     beforeEach(async () => {
       const result = await authService.register({
@@ -158,7 +157,6 @@ describe('AuthService Unit Tests', () => {
         role: UserRole.CUSTOMER,
       });
       refreshTokenString = result.tokens.refreshToken;
-      userId = result.user.id;
     });
 
     it('should generate new token pair', async () => {

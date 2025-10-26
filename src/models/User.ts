@@ -18,14 +18,14 @@ interface UserAttributes {
 interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'failedLoginAttempts' | 'lockoutUntil'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public id!: string;
-  public email!: string;
-  public password!: string;
-  public role!: UserRole;
-  public failedLoginAttempts!: number;
-  public lockoutUntil!: Date | null;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: string;
+  declare email: string;
+  declare password: string;
+  declare role: UserRole;
+  declare failedLoginAttempts: number;
+  declare lockoutUntil: Date | null;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Instance methods
   public async comparePassword(candidatePassword: string): Promise<boolean> {
@@ -56,8 +56,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
   // Remove password from JSON output
   public toJSON(): Partial<UserAttributes> {
-    const values: Partial<UserAttributes> = { ...this.get() };
-    delete values.password;
+    const { password: _password, ...values } = this.get() as UserAttributes;
     return values;
   }
 }

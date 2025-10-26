@@ -19,13 +19,13 @@ class RefreshToken
   extends Model<RefreshTokenAttributes, RefreshTokenCreationAttributes>
   implements RefreshTokenAttributes
 {
-  public id!: string;
-  public userId!: string;
-  public token!: string;
-  public expiresAt!: Date;
-  public isRevoked!: boolean;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: string;
+  declare userId: string;
+  declare token: string;
+  declare expiresAt: Date;
+  declare isRevoked: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   public isExpired(): boolean {
     return new Date() > this.expiresAt;
