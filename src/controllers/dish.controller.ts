@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as dishService from '../services/dish.service';
 import { AuthenticatedRequest } from '../types';
+import { createRatingSchema } from '../validators/rating.schema';
 
 class DishController {
   async create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -59,6 +60,18 @@ class DishController {
     try {
       await dishService.deleteDish(req.params.id);
       res.status(204).json({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+    async rate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { rating } = createRatingSchema.parse(req.body);
+
+      const updatedDish = await dishService.rateDish(id, rating);
+      res.status(200).json({ success: true, data: updatedDish });
     } catch (err) {
       next(err);
     }

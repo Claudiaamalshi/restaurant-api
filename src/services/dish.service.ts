@@ -113,3 +113,22 @@ export const deleteDish = async (id: string): Promise<void> => {
 
   await dish.destroy();
 };
+
+/**
+ * Rate dish
+ */
+export async function rateDish(dishId: string, rating: number) {
+  const dish = await Dish.findByPk(dishId);
+  if (!dish) throw new Error('Dish not found');
+
+  // Incremental weighted average update
+  const newRatingCount = dish.ratingCount + 1;
+  const newAverageRating = ((dish.averageRating * dish.ratingCount) + rating) / newRatingCount;
+
+  dish.averageRating = parseFloat(newAverageRating.toFixed(2)); // round to 2 decimals
+  dish.ratingCount = newRatingCount;
+
+  await dish.save();
+
+  return dish;
+}

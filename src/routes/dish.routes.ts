@@ -4,6 +4,7 @@ import { validate } from '../middleware/validation.middleware';
 import { createDishSchema, updateDishSchema } from '../validators/dish.schema';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { UserRole } from '../types';
+import { createRatingSchema } from '../validators/rating.schema';
 
 const router = Router();
 
@@ -37,6 +38,15 @@ router.delete(
   authenticate,
   authorize(UserRole.RESTAURANT_OWNER, UserRole.ADMIN),
   dishController.delete
+);
+
+// POST /dishes/:id/ratings — only customers can rate
+router.post(
+  '/dishes/:id/ratings',
+  authenticate,
+  authorize(UserRole.CUSTOMER),
+  validate(createRatingSchema),
+  dishController.rate
 );
 
 export default router;
