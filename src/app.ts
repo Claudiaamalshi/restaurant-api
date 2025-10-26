@@ -9,6 +9,7 @@ import { apiLimiter } from './middleware/rateLimit.middleware';
 import authRoutes from './routes/auth.routes';
 import restaurantRoutes from './routes/restaurant.routes';
 import menuRoutes from './routes/menu.routes';
+import categoryRoutes from "./routes/category.routes";
 
 
 const app: Application = express();
@@ -43,6 +44,7 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
 app.use(`/api/${env.API_VERSION}/restaurants`, restaurantRoutes);
 app.use(`/api/${env.API_VERSION}/menus`, menuRoutes);
+app.use(`/api/${env.API_VERSION}/menus/:menuId/categories`, categoryRoutes);
 
 // Error handlers (must be last)
 app.use(notFoundHandler);
