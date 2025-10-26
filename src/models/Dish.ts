@@ -3,7 +3,7 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Category from './Category';
 
-interface DishAttributes {
+export interface DishAttributes {
   id: string;
   categoryId: string;
   name: string;
@@ -17,7 +17,7 @@ interface DishAttributes {
   updatedAt?: Date;
 }
 
-type DishCreationAttributes = Optional<DishAttributes, 'id' | 'description' | 'isAvailable' | 'imageUrl' | 'averageRating' | 'ratingCount'>;
+export type DishCreationAttributes = Optional<DishAttributes, 'id' | 'description' | 'isAvailable' | 'imageUrl' | 'averageRating' | 'ratingCount'>;
 
 class Dish extends Model<DishAttributes, DishCreationAttributes> implements DishAttributes {
   declare id: string;
