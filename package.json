@@ -16,7 +16,8 @@
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:seed": "sequelize-cli db:seed:all",
     "db:seed:undo": "sequelize-cli db:seed:undo:all",
-    "db:reset": "npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed"
+    "db:reset": "npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed",
+    "seed:restaurants": "ts-node ./scripts/seed-restaurants.ts"
   },
   "keywords": [
     "restaurant",
@@ -67,7 +68,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0",
