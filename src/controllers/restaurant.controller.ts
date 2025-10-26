@@ -13,13 +13,20 @@ class RestaurantController {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {
-    try {
-      const restaurants = await restaurantService.findAll(req.query, {});
-      res.status(200).json({ success: true, data: restaurants });
-    } catch (err) {
-      next(err);
-    }
+  try {
+    const query = {
+      ...req.query,
+      isActive: req.query.isActive === 'true' ? true :
+                req.query.isActive === 'false' ? false : undefined
+    };
+
+    const restaurants = await restaurantService.findAll(query, {});
+    res.status(200).json({ success: true, data: restaurants });
+  } catch (err) {
+    next(err);
   }
+ }
+
 
   async findOne(req: Request, res: Response, next: NextFunction) {
     try {

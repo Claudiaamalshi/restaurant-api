@@ -6,8 +6,24 @@ class RestaurantService {
   }
 
   async findAll(filters: any, pagination: any) {
+    const where: any = {};
+
+    if (filters.isActive !== undefined) {
+      if (typeof filters.isActive === 'boolean') {
+        where.isActive = filters.isActive;
+      } else if (typeof filters.isActive === 'string') {
+        const val = filters.isActive.toLowerCase();
+        if (val === 'true') where.isActive = true;
+        if (val === 'false') where.isActive = false;
+      }
+    }
+
+    if (filters.cuisineType) {
+      where.cuisineType = filters.cuisineType;
+    }
+
     return Restaurant.findAll({
-      where: filters,
+      where,
       ...pagination,
     });
   }
