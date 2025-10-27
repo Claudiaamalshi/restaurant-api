@@ -18,9 +18,7 @@ const router = express.Router();
  *       200:
  *         description: OK
  */
-router.get('/', (_req, res) => {
-  res.status(200).json({ success: true, message: 'Menu routes base endpoint working 🚀' });
-});
+router.get('/', menuController.getAllMenus.bind(menuController));
 
 /**
  * @openapi

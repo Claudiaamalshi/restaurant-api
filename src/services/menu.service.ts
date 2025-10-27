@@ -1,4 +1,5 @@
 // src/services/menu.service.ts
+import Menu from '../models/Menu';
 import Category from '../models/Category';
 import Dish from '../models/Dish';
 
@@ -8,6 +9,26 @@ interface DishFilters {
   order?: 'asc' | 'desc';
   page?: number;
   limit?: number;
+}
+
+export async function getAllMenus() {
+  const menus = await Menu.findAll({
+    include: [
+      {
+        model: Category,
+        as: 'categories',
+        include: [
+          {
+            model: Dish,
+            as: 'dishes',
+          },
+        ],
+      },
+    ],
+    order: [['createdAt', 'DESC']],
+  });
+
+  return menus;
 }
 
 export async function getFullMenu(menuId: string, filters: DishFilters) {
