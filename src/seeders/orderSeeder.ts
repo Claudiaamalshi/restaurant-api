@@ -1,9 +1,5 @@
 import { faker } from '@faker-js/faker';
-import User from '../models/User';
-import Restaurant from '../models/Restaurant';
-import Dish from '../models/Dish';
-import Order from '../models/Order';
-import OrderItem from '../models/OrderItem';
+import { User, Restaurant, Menu, Category, Dish, Order, OrderItem } from '../models';
 import { OrderStatus, UserRole } from '../types';
 
 export class OrderSeeder {
@@ -12,61 +8,63 @@ export class OrderSeeder {
     const startTime = Date.now();
 
     try {
-      // Get all customers
+      // 1️⃣ Get all customers
       const customers = await User.findAll({
         where: { role: UserRole.CUSTOMER },
         attributes: ['id'],
       });
 
-      if (customers.length === 0) {
+      if (!customers.length) {
         throw new Error('No customers found. Please seed users first.');
       }
 
-      // Get all active restaurants
+      // 2️⃣ Get all active restaurants
       const restaurants = await Restaurant.findAll({
         where: { isActive: true },
         attributes: ['id'],
       });
 
-      if (restaurants.length === 0) {
+      if (!restaurants.length) {
         throw new Error('No restaurants found. Please seed restaurants first.');
       }
 
-      // Get all available dishes grouped by restaurant
+      // 3️⃣ Fetch dishes grouped by restaurant (via Menu -> Category -> Dish)
       const dishesByRestaurant = new Map<string, any[]>();
-      
+
       for (const restaurant of restaurants) {
-        const dishes = await Dish.findAll({
-          where: { isAvailable: true },
-          attributes: ['id', 'price'],
+        const menu = await Menu.findOne({
+          where: { restaurantId: restaurant.id },
           include: [
             {
-              model: require('../models/Category').default,
-              as: 'category',
-              required: true,
-              attributes: [],
+              model: Category,
+              as: 'categories', // Must match index.ts association
               include: [
                 {
-                  model: require('../models/Menu').default,
-                  as: 'menu',
-                  where: { restaurantId: restaurant.id },
-                  attributes: [],
+                  model: Dish,
+                  as: 'dishes', // Must match index.ts association
+                  where: { isAvailable: true },
+                  attributes: ['id', 'price'],
+                  required: false, // in case some categories have no dishes
                 },
               ],
+              required: false, // in case a menu has no categories
             },
           ],
         });
 
-        if (dishes.length > 0) {
-          dishesByRestaurant.set(restaurant.id, dishes);
+        if (menu && menu.categories?.length) {
+          const allDishes = menu.categories.flatMap((cat: any) => cat.dishes || []);
+          if (allDishes.length > 0) {
+            dishesByRestaurant.set(restaurant.id, allDishes);
+          }
         }
       }
 
-      if (dishesByRestaurant.size === 0) {
-        throw new Error('No dishes found. Please seed menus first.');
+      if (!dishesByRestaurant.size) {
+        throw new Error('No dishes found. Please seed menus and dishes first.');
       }
 
-      // Prepare batch data
+      // 4️⃣ Seed orders in batches
       const batchSize = 1000;
       const orderStatuses = Object.values(OrderStatus);
       let createdCount = 0;
@@ -76,31 +74,23 @@ export class OrderSeeder {
         const ordersData: any[] = [];
         const orderItemsData: any[] = [];
 
-        // Generate orders
         for (let j = 0; j < currentBatchSize; j++) {
           const customer = faker.helpers.arrayElement(customers);
-          const restaurant = faker.helpers.arrayElement(
-            Array.from(dishesByRestaurant.keys())
-          );
-          const dishes = dishesByRestaurant.get(restaurant)!;
+          const restaurantId = faker.helpers.arrayElement(Array.from(dishesByRestaurant.keys()));
+          const dishes = dishesByRestaurant.get(restaurantId)!;
 
-          // Generate random date in the past 6 months
           const createdAt = faker.date.between({
             from: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
             to: new Date(),
           });
 
-          // Generate order
           const orderId = faker.string.uuid();
           const status = faker.helpers.arrayElement(orderStatuses);
-          
-          // Select random dishes (1-5 items)
           const numItems = faker.number.int({ min: 1, max: 5 });
           const selectedDishes = faker.helpers.arrayElements(dishes, numItems);
 
           let totalAmount = 0;
 
-          // Generate order items
           for (const dish of selectedDishes) {
             const quantity = faker.number.int({ min: 1, max: 5 });
             const priceAtOrder = parseFloat(dish.price.toString());
@@ -122,7 +112,7 @@ export class OrderSeeder {
           ordersData.push({
             id: orderId,
             userId: customer.id,
-            restaurantId: restaurant,
+            restaurantId,
             status,
             totalAmount: totalAmount.toFixed(2),
             notes: faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.3 }),
@@ -131,7 +121,6 @@ export class OrderSeeder {
           });
         }
 
-        // Bulk insert orders and items
         await Order.bulkCreate(ordersData, { validate: false });
         await OrderItem.bulkCreate(orderItemsData, { validate: false });
 
