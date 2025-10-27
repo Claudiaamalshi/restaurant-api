@@ -170,75 +170,83 @@ export class OrderService {
    * List orders with filters and pagination
    */
   async listOrders(
-    userId: string,
-    userRole: string,
-    query: ListOrdersQuery
-  ): Promise<{ orders: Order[]; total: number; page: number; limit: number }> {
-    const { page = 1, limit = 20, status, restaurantId, from, to, sortBy = 'createdAt', order: sortOrder = 'desc' } = query;
-    const offset = (page - 1) * limit;
+  userId: string,
+  userRole: string,
+  query: ListOrdersQuery
+): Promise<{ orders: Order[]; total: number; page: number; limit: number }> {
+  const { page = 1, limit = 20, status, restaurantId, from, to, sortBy = 'createdAt', order: sortOrder = 'desc' } = query;
+  const numericPage = Number(page) || 1;
+  const numericLimit = Number(limit) || 20;
+  const offset = (numericPage - 1) * numericLimit;
 
-    // Build where clause based on role
-    const whereClause: WhereOptions = {};
+  // Build where clause
+  const whereClause: WhereOptions = {};
 
-    // Role-based filtering
-    if (userRole === 'CUSTOMER') {
-      whereClause.userId = userId;
-    } else if (userRole === 'RESTAURANT_OWNER') {
-      // Get restaurants owned by user
-      const restaurants = await Restaurant.findAll({
-        where: { ownerId: userId },
-        attributes: ['id'],
-      });
-      whereClause.restaurantId = restaurants.map(r => r.id);
-    }
-    // ADMIN can see all orders
-
-    // Apply filters
-    if (status) {
-      whereClause.status = status;
-    }
-
-    if (restaurantId) {
-      // Verify authorization for restaurant filter
-      if (userRole === 'RESTAURANT_OWNER') {
-        const ownsRestaurant = await Restaurant.findOne({
-          where: { id: restaurantId, ownerId: userId },
-        });
-        if (!ownsRestaurant) {
-          throw new AuthorizationError('You do not own this restaurant');
-        }
-      }
-      whereClause.restaurantId = restaurantId;
-    }
-
-    if (from || to) {
-      whereClause.createdAt = {};
-      if (from) whereClause.createdAt[Op.gte] = new Date(from);
-      if (to) whereClause.createdAt[Op.lte] = new Date(to);
-    }
-
-    // Execute query
-    const { rows: orders, count: total } = await Order.findAndCountAll({
-      where: whereClause,
-      include: [
-        {
-          model: Restaurant,
-          as: 'restaurant',
-          attributes: ['id', 'name'],
-        },
-        {
-          model: OrderItem,
-          as: 'items',
-          attributes: ['id', 'quantity', 'priceAtOrder', 'subtotal'],
-        },
-      ],
-      order: [[sortBy, sortOrder.toUpperCase()]],
-      limit,
-      offset,
+  // Role-based filtering
+  if (userRole === 'CUSTOMER') {
+    whereClause.userId = userId;
+  } else if (userRole === 'RESTAURANT_OWNER') {
+    // Get restaurants owned by user
+    const restaurants = await Restaurant.findAll({
+      where: { ownerId: userId },
+      attributes: ['id'],
     });
 
-    return { orders, total, page, limit };
+    const restaurantIds = restaurants.map(r => r.id);
+
+    if (restaurantId) {
+      // Verify owner owns this restaurant
+      if (!restaurantIds.includes(restaurantId)) {
+        throw new AuthorizationError('You do not own this restaurant');
+      }
+      whereClause.restaurantId = restaurantId;
+    } else {
+      // If no restaurants found, return empty result instead of querying DB
+      if (restaurantIds.length === 0) {
+        return { orders: [], total: 0, page: numericPage, limit: numericLimit };
+      }
+      whereClause.restaurantId = restaurantIds;
+    }
+  } else if (restaurantId) {
+    // Admin filtering by specific restaurant
+    whereClause.restaurantId = restaurantId;
   }
+
+  // Status filter
+  if (status) {
+    whereClause.status = status;
+  }
+
+  // Date filters
+  if (from || to) {
+    whereClause.createdAt = {};
+    if (from) whereClause.createdAt[Op.gte] = new Date(from);
+    if (to) whereClause.createdAt[Op.lte] = new Date(to);
+  }
+
+  // Execute query
+  const { rows: orders, count: total } = await Order.findAndCountAll({
+    where: whereClause,
+    include: [
+      {
+        model: Restaurant,
+        as: 'restaurant',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: OrderItem,
+        as: 'items',
+        attributes: ['id', 'quantity', 'priceAtOrder', 'subtotal'],
+      },
+    ],
+    order: [[sortBy, sortOrder.toUpperCase()]],
+    limit: numericLimit,
+    offset,
+  });
+
+  return { orders, total, page: numericPage, limit: numericLimit };
+}
+
 
   /**
    * Update order status
