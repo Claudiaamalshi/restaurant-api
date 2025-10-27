@@ -42,7 +42,7 @@ setupSwagger(app);
 // Centralized API routes
 app.use(apiRoutes);
 
-// Error handlers (must be last)
+// Error handlers
 app.use(notFoundHandler);
 app.use(errorHandler);
 

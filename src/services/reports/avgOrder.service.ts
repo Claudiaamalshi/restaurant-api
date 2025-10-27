@@ -143,7 +143,7 @@ export class AvgOrderService {
     const totalPages = Math.ceil(total / limit);
     const offset = (page - 1) * limit;
 
-    // ✅ Sorting improvement
+    // Sorting improvement
     const validSortFields = ['period', 'averageOrderValue', 'orderCount', 'totalRevenue'];
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'period';
     const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';

@@ -40,7 +40,7 @@ export async function getFullMenu(menuId: string, filters: DishFilters) {
     include: [
       {
         model: Dish,
-        as: 'dishes', // ⚠ Must match alias defined in association
+        as: 'dishes', // Must match alias defined in association
         where: filters.includeUnavailable ? {} : { isAvailable: true },
         required: false, // include even if no dishes
         separate: true, // enables pagination on nested association

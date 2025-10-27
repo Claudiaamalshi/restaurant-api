@@ -6,7 +6,6 @@ const router = express.Router();
 
 /**
  * Base route for menu management APIs.
- * This will later include endpoints for menu CRUD operations.
  */
 /**
  * @openapi
