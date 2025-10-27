@@ -2,7 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import * as menuService from '../services/menu.service';
 
 class MenuController {
-  // ...other methods
+    async getAllMenus(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const menus = await menuService.getAllMenus();
+      res.status(200).json({
+        success: true,
+        count: menus.length,
+        data: menus,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async getFullMenu(req: Request, res: Response, next: NextFunction) {
     try {

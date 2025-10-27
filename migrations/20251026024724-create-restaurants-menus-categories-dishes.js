@@ -2,7 +2,6 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // USERS already exist in your schema, so we skip them here.
 
     // RESTAURANTS
     await queryInterface.createTable('restaurants', {

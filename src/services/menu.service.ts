@@ -1,4 +1,5 @@
 // src/services/menu.service.ts
+import Menu from '../models/Menu';
 import Category from '../models/Category';
 import Dish from '../models/Dish';
 
@@ -10,6 +11,26 @@ interface DishFilters {
   limit?: number;
 }
 
+export async function getAllMenus() {
+  const menus = await Menu.findAll({
+    include: [
+      {
+        model: Category,
+        as: 'categories',
+        include: [
+          {
+            model: Dish,
+            as: 'dishes',
+          },
+        ],
+      },
+    ],
+    order: [['createdAt', 'DESC']],
+  });
+
+  return menus;
+}
+
 export async function getFullMenu(menuId: string, filters: DishFilters) {
   const limit = filters.limit && filters.limit > 0 ? filters.limit : 10;
 
@@ -19,7 +40,7 @@ export async function getFullMenu(menuId: string, filters: DishFilters) {
     include: [
       {
         model: Dish,
-        as: 'dishes', // ⚠ Must match alias defined in association
+        as: 'dishes', // Must match alias defined in association
         where: filters.includeUnavailable ? {} : { isAvailable: true },
         required: false, // include even if no dishes
         separate: true, // enables pagination on nested association
