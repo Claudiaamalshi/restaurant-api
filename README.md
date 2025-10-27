@@ -108,7 +108,7 @@ src/
 
 - Node.js >= 18.0.0
 - npm >= 9.0.0
-- MySQL >= 8.0
+- MySQL >= 8.0  / Docker desktop
 
 ### Installation
 
@@ -148,10 +148,19 @@ JWT_REFRESH_SECRET=your_32_char_min_refresh_secret_here
 
 4. Create MySQL database
 
+To set up and start the configured MySQL Docker image using Docker Compose, follow these steps:
+
+Create a `.env` file in the root directory (check `.env.example`) and add the following environment variables:
+
+- `MYSQL_ROOT_PASSWORD`
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+
+Start the MySQL Docker container:
+
 ```bash
-mysql -u root -p
-CREATE DATABASE restaurant_api;
-exit;
+docker compose up
 ```
 
 5. Run migrations and seed
