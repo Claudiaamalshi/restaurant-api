@@ -354,9 +354,8 @@ src/tests/
 
 This project was developed with assistance from:
 
-- Windsurf/Cursor — Code generation and scaffolding
-- Claude (Anthropic) — Architecture decisions, query optimization, documentation
-- GitHub Copilot — Code completion and test generation
+- Windsurf IDE — Code generation and scaffolding
+- Claude (Anthropic) & ChatGPT — Architecture decisions, query optimization, documentation
 
 All AI-generated code has been reviewed, tested, and understood before integration.
 
