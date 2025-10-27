@@ -127,7 +127,7 @@ export class AvgOrderService {
         dateFormat = 'DATE(orders.created_at)';
     }
 
-    // Get count for pagination
+    // Pagination count
     const countQuery = `
       SELECT COUNT(DISTINCT ${dateFormat}) as total
       FROM orders
@@ -143,6 +143,11 @@ export class AvgOrderService {
     const totalPages = Math.ceil(total / limit);
     const offset = (page - 1) * limit;
 
+    // ✅ Sorting improvement
+    const validSortFields = ['period', 'averageOrderValue', 'orderCount', 'totalRevenue'];
+    const sortField = validSortFields.includes(sortBy) ? sortBy : 'period';
+    const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
     // Get grouped averages
     const averagesQuery = `
       SELECT 
@@ -153,7 +158,7 @@ export class AvgOrderService {
       FROM orders
       ${whereClause}
       GROUP BY ${dateFormat}
-      ORDER BY ${sortBy === 'period' ? dateFormat : sortBy} ${order.toUpperCase()}
+      ORDER BY ${sortField === 'period' ? dateFormat : sortField} ${sortOrder}
       LIMIT :limit OFFSET :offset
     `;
 
