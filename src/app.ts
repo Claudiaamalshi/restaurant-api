@@ -11,6 +11,7 @@ import restaurantRoutes from './routes/restaurant.routes';
 import menuRoutes from './routes/menu.routes';
 import categoryRoutes from "./routes/category.routes";
 import dishRoutes from './routes/dish.routes';
+import orderRoutes from './routes/order.routes';
 
 const app: Application = express();
 
@@ -46,6 +47,7 @@ app.use(`/api/${env.API_VERSION}/restaurants`, restaurantRoutes);
 app.use(`/api/${env.API_VERSION}/menus`, menuRoutes);
 app.use(`/api/${env.API_VERSION}/menus/:menuId/categories`, categoryRoutes);
 app.use(`/api/${env.API_VERSION}`, dishRoutes);
+app.use(`/api/${env.API_VERSION}/orders`, orderRoutes);
 
 // Error handlers (must be last)
 app.use(notFoundHandler);
