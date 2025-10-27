@@ -6,8 +6,6 @@ import Category from './Category';
 import Dish from './Dish';
 import Order from './Order';
 import OrderItem from './OrderItem';
-import { Sequelize } from 'sequelize';
-import env from '../config/env';
 
 /**
  * Associations
