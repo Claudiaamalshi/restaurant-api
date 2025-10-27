@@ -2,6 +2,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Menu from './Menu';
+import type Dish from './Dish';
 
 interface CategoryAttributes {
   id: string;
@@ -25,6 +26,7 @@ class Category extends Model<CategoryAttributes, CategoryCreationAttributes> imp
   declare isAvailable: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+  declare dishes?: Dish[];
 }
 
 Category.init(
