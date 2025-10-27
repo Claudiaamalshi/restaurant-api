@@ -2,6 +2,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Restaurant from './Restaurant';
+import type Category from './Category';
 
 interface MenuAttributes {
   id: string;
@@ -21,6 +22,7 @@ class Menu extends Model<MenuAttributes, MenuCreationAttributes> implements Menu
   declare description: string | null;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+  declare categories?: Category[];
 }
 
 Menu.init(

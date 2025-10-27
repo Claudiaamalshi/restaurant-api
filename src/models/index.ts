@@ -4,6 +4,8 @@ import Restaurant from './Restaurant';
 import Menu from './Menu';
 import Category from './Category';
 import Dish from './Dish';
+import Order from './Order';
+import OrderItem from './OrderItem';
 
 /**
  * Associations
@@ -24,9 +26,26 @@ Category.belongsTo(Menu, { foreignKey: 'menuId', as: 'menu' });
 Category.hasMany(Dish, { foreignKey: 'categoryId', as: 'dishes' });
 Dish.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
 
+// User -> Order
+User.hasMany(Order, { foreignKey: 'userId', as: 'orders' });
+Order.belongsTo(User, { foreignKey: 'userId', as: 'customer' });
+
+// Restaurant -> Order
+Restaurant.hasMany(Order, { foreignKey: 'restaurantId', as: 'orders' });
+Order.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// Order -> OrderItem
+Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items' });
+OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
+
+// Dish -> OrderItem
+Dish.hasMany(OrderItem, { foreignKey: 'dishId', as: 'orderItems' });
+OrderItem.belongsTo(Dish, { foreignKey: 'dishId', as: 'dish' });
+
+
 
 // Export all models
-export { User, RefreshToken, Restaurant, Menu, Category, Dish};
+export { User, RefreshToken, Restaurant, Menu, Category, Dish, Order, OrderItem};
 
 // Sync all models (for development)
 export const syncModels = async (force = false): Promise<void> => {
@@ -36,6 +55,8 @@ export const syncModels = async (force = false): Promise<void> => {
   await Menu.sync({ force });
   await Category.sync({ force });
   await Dish.sync({ force });
+  await Order.sync({ force });
+  await OrderItem.sync({ force });
   console.log('✓ All models synchronized');
 };
 
@@ -46,5 +67,7 @@ export default {
   Menu,
   Category,
   Dish,
+  Order,
+  OrderItem,
   syncModels,
 };
