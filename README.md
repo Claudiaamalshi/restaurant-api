@@ -222,6 +222,8 @@ npm run db:reset
 ## Database Schema
 
 See the ERD diagram in the artifacts above for complete schema details.
+- [ERD Diagram](https://github.com/Claudiaamalshi/restaurant-api/blob/chore/express-maintenance-fixes/docs/Restaurant%20Database%20schema%20-%20ERD.png)
+- [Architecture Decisions & Assumptions (PDF)](https://github.com/Claudiaamalshi/restaurant-api/blob/chore/express-maintenance-fixes/docs/Restaurant%20Architecture%20Decisions%20%26%20Assumptions.pdf)
 
 ### Key Tables
 
