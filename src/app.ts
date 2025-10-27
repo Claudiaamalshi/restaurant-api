@@ -12,7 +12,9 @@ import menuRoutes from './routes/menu.routes';
 import categoryRoutes from "./routes/category.routes";
 import dishRoutes from './routes/dish.routes';
 import orderRoutes from './routes/order.routes';
-
+import salesRoutes from './routes/reports/sales.routes';
+import topItemsRoutes from './routes/reports/topItems.routes';
+import avgOrderRoutes from './routes/reports/avgOrder.routes';
 const app: Application = express();
 
 // Security middleware
@@ -48,6 +50,10 @@ app.use(`/api/${env.API_VERSION}/menus`, menuRoutes);
 app.use(`/api/${env.API_VERSION}/menus/:menuId/categories`, categoryRoutes);
 app.use(`/api/${env.API_VERSION}`, dishRoutes);
 app.use(`/api/${env.API_VERSION}/orders`, orderRoutes);
+app.use(`/api/${env.API_VERSION}/reports`, salesRoutes);
+app.use(`/api/${env.API_VERSION}/reports`, topItemsRoutes);
+app.use(`/api/${env.API_VERSION}/reports`, avgOrderRoutes);
+
 
 // Error handlers (must be last)
 app.use(notFoundHandler);
