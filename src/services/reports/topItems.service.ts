@@ -22,6 +22,7 @@ export class TopItemsService {
   ): Promise<{ items: TopItemData[]; period: any; pagination: any }> {
     const {
       sortBy = 'revenue',
+      sortOrder = 'desc',
       from,
       to,
       restaurantId,
@@ -85,7 +86,7 @@ export class TopItemsService {
 
     // Determine sort field
     const sortField = sortBy === 'quantity' ? 'totalQuantity' : 'totalRevenue';
-    const sortOrder = 'DESC';
+    const sortOrderSql = (sortOrder || 'desc').toLowerCase() === 'asc' ? 'ASC' : 'DESC';
 
     // Get total count
     const countQuery = `
@@ -122,7 +123,7 @@ export class TopItemsService {
       INNER JOIN restaurants ON menus.restaurant_id = restaurants.id
       ${whereClause}
       GROUP BY dishes.id, dishes.name, categories.name, restaurants.name
-      ORDER BY ${sortField} ${sortOrder}
+      ORDER BY ${sortField} ${sortOrderSql}
       LIMIT :pageLimit OFFSET :offset
     `;
 
