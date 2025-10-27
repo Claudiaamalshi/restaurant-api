@@ -15,6 +15,7 @@ import orderRoutes from './routes/order.routes';
 import salesRoutes from './routes/reports/sales.routes';
 import topItemsRoutes from './routes/reports/topItems.routes';
 import avgOrderRoutes from './routes/reports/avgOrder.routes';
+import { setupSwagger } from './config/swagger';
 const app: Application = express();
 
 // Security middleware
@@ -42,6 +43,9 @@ app.get('/health', (_req: Request, res: Response) => {
     environment: env.NODE_ENV,
   });
 });
+
+// Swagger docs
+setupSwagger(app);
 
 // API routes
 app.use(`/api/${env.API_VERSION}/auth`, authRoutes);

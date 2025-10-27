@@ -43,6 +43,23 @@ const options: swaggerJsdoc.Options = {
             updatedAt: { type: 'string', format: 'date-time' },
           },
         },
+        RegisterRequest: {
+          type: 'object',
+          required: ['email', 'password', 'role'],
+          properties: {
+            email: { type: 'string', format: 'email' },
+            password: { type: 'string', minLength: 8 },
+            role: { type: 'string', enum: ['CUSTOMER', 'RESTAURANT_OWNER', 'ADMIN'] },
+          },
+        },
+        LoginRequest: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email' },
+            password: { type: 'string' },
+          },
+        },
         TokenPair: {
           type: 'object',
           properties: {
@@ -67,7 +84,8 @@ const options: swaggerJsdoc.Options = {
       },
     },
   },
-  apis: ['./src/routes/*.ts'], // Path to route files for JSDoc comments
+  // Include all nested route files in TS during dev and JS after build
+  apis: ['src/routes/**/*.ts', 'dist/routes/**/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
