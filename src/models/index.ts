@@ -47,17 +47,32 @@ OrderItem.belongsTo(Dish, { foreignKey: 'dishId', as: 'dish' });
 // Export all models
 export { User, RefreshToken, Restaurant, Menu, Category, Dish, Order, OrderItem};
 
-// Sync all models (for development)
+/**
+ * Safe model synchronization
+ * Only runs in development or test environment
+ */
 export const syncModels = async (force = false): Promise<void> => {
-  await User.sync({ force });
-  await RefreshToken.sync({ force });
-  await Restaurant.sync({ force });
-  await Menu.sync({ force });
-  await Category.sync({ force });
-  await Dish.sync({ force });
-  await Order.sync({ force });
-  await OrderItem.sync({ force });
-  console.log('✓ All models synchronized');
+  const isDevOrTest = ['development', 'test'].includes(process.env.NODE_ENV || '');
+
+  if (!isDevOrTest) {
+    console.warn('⚠️ syncModels() skipped — unsafe to run outside development or test environments.');
+    return;
+  }
+
+  try {
+    console.log(`🔄 Synchronizing models (${force ? 'force' : 'safe'})...`);
+    await User.sync({ force });
+    await RefreshToken.sync({ force });
+    await Restaurant.sync({ force });
+    await Menu.sync({ force });
+    await Category.sync({ force });
+    await Dish.sync({ force });
+    await Order.sync({ force });
+    await OrderItem.sync({ force });
+    console.log('✅ All models synchronized successfully!');
+  } catch (err) {
+    console.error('❌ Error syncing models:', err);
+  }
 };
 
 export default {

@@ -108,7 +108,7 @@ src/
 
 - Node.js >= 18.0.0
 - npm >= 9.0.0
-- MySQL >= 8.0
+- MySQL >= 8.0  / Docker desktop
 
 ### Installation
 
@@ -148,10 +148,19 @@ JWT_REFRESH_SECRET=your_32_char_min_refresh_secret_here
 
 4. Create MySQL database
 
+To set up and start the configured MySQL Docker image using Docker Compose, follow these steps:
+
+Create a `.env` file in the root directory (check `.env.example`) and add the following environment variables:
+
+- `MYSQL_ROOT_PASSWORD`
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+
+Start the MySQL Docker container:
+
 ```bash
-mysql -u root -p
-CREATE DATABASE restaurant_api;
-exit;
+docker compose up
 ```
 
 5. Run migrations and seed
@@ -213,6 +222,8 @@ npm run db:reset
 ## Database Schema
 
 See the ERD diagram in the artifacts above for complete schema details.
+- [ERD Diagram](https://github.com/Claudiaamalshi/restaurant-api/blob/chore/express-maintenance-fixes/docs/Restaurant%20Database%20schema%20-%20ERD.png)
+- [Architecture Decisions & Assumptions (PDF)](https://github.com/Claudiaamalshi/restaurant-api/blob/chore/express-maintenance-fixes/docs/Restaurant%20Architecture%20Decisions%20%26%20Assumptions.pdf)
 
 ### Key Tables
 
@@ -345,9 +356,8 @@ src/tests/
 
 This project was developed with assistance from:
 
-- Windsurf/Cursor — Code generation and scaffolding
-- Claude (Anthropic) — Architecture decisions, query optimization, documentation
-- GitHub Copilot — Code completion and test generation
+- Windsurf IDE — Code generation and scaffolding
+- Claude (Anthropic) & ChatGPT — Architecture decisions, query optimization, documentation
 
 All AI-generated code has been reviewed, tested, and understood before integration.
 

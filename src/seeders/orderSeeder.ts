@@ -8,7 +8,7 @@ export class OrderSeeder {
     const startTime = Date.now();
 
     try {
-      // 1️⃣ Get all customers
+      // Get all customers
       const customers = await User.findAll({
         where: { role: UserRole.CUSTOMER },
         attributes: ['id'],
@@ -18,7 +18,7 @@ export class OrderSeeder {
         throw new Error('No customers found. Please seed users first.');
       }
 
-      // 2️⃣ Get all active restaurants
+      // Get all active restaurants
       const restaurants = await Restaurant.findAll({
         where: { isActive: true },
         attributes: ['id'],
@@ -28,7 +28,7 @@ export class OrderSeeder {
         throw new Error('No restaurants found. Please seed restaurants first.');
       }
 
-      // 3️⃣ Fetch dishes grouped by restaurant (via Menu -> Category -> Dish)
+      // Fetch dishes grouped by restaurant (via Menu -> Category -> Dish)
       const dishesByRestaurant = new Map<string, any[]>();
 
       for (const restaurant of restaurants) {
@@ -64,7 +64,7 @@ export class OrderSeeder {
         throw new Error('No dishes found. Please seed menus and dishes first.');
       }
 
-      // 4️⃣ Seed orders in batches
+      // Seed orders in batches
       const batchSize = 1000;
       const orderStatuses = Object.values(OrderStatus);
       let createdCount = 0;
