@@ -48,7 +48,12 @@ export class SalesService {
       `orders.created_at <= :to`,
     ];
 
-    const replacements: any = { from, to };
+    // Convert YYYY-MM-DD strings to Date objects (start and end of day)
+    const fromDate = new Date(from + 'T00:00:00Z');
+    const toDate = new Date(to + 'T23:59:59Z');
+
+    const replacements: any = { from: fromDate, to: toDate };
+
 
     if (restaurantId) {
       conditions.push('orders.restaurant_id = :restaurantId');
