@@ -1,5 +1,5 @@
-import sequelize from '../src/config/database';
-import categoryService from '../src/services/category.service';
+import sequelize from '../config/database';
+import categoryService from '../services/category.service';
 
 (async () => {
   try {

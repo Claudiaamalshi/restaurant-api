@@ -6,8 +6,9 @@ import {
   ConflictError,
   NotFoundError,
   TooManyRequestsError,
+  AuthorizationError,
 } from '../utils/errors';
-import { TokenPair, TokenPayload } from '../types';
+import { TokenPair, TokenPayload, UserRole } from '../types';
 import { RegisterInput, LoginInput } from '../validators/auth.validator';
 
 export class AuthService {
@@ -15,6 +16,10 @@ export class AuthService {
    * Register a new user
    */
   async register(data: RegisterInput): Promise<{ user: User; tokens: TokenPair }> {
+    // Reject attempt to create ADMIN via public registration
+    if ((data.role as UserRole) === UserRole.ADMIN) {
+      throw new AuthorizationError('Admin creation is restricted to server-side operations only');
+    }
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email: data.email } });
     if (existingUser) {

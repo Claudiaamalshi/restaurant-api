@@ -37,23 +37,24 @@ class RestaurantController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
+  async update(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const restaurant = await restaurantService.update(req.params.id, req.body);
+      const restaurant = await restaurantService.update(req.params.id, req.body, req.user);
       res.status(200).json({ success: true, data: restaurant });
     } catch (err) {
       next(err);
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async delete(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const restaurant = await restaurantService.softDelete(req.params.id);
+      const restaurant = await restaurantService.softDelete(req.params.id, req.user);
       res.status(200).json({ success: true, data: restaurant });
     } catch (err) {
       next(err);
     }
   }
+
 }
 
 export default new RestaurantController();
