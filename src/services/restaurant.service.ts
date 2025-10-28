@@ -1,3 +1,4 @@
+import { UserRole } from '@/types';
 import Restaurant from '../models/Restaurant';
 
 class RestaurantService {
@@ -32,15 +33,25 @@ class RestaurantService {
     return Restaurant.findByPk(id, { include: ['menu'] });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any, user: any) {
     const restaurant = await Restaurant.findByPk(id);
     if (!restaurant) throw new Error('Restaurant not found');
+    // Ownership check
+    if (user.role !== UserRole.ADMIN && restaurant.ownerId !== user.id) {
+      throw new Error('Forbidden: Not the owner');
+    }
     return restaurant.update(data);
   }
 
-  async softDelete(id: string) {
+  async softDelete(id: string, user: any) {
     const restaurant = await Restaurant.findByPk(id);
     if (!restaurant) throw new Error('Restaurant not found');
+
+    // Ownership check
+    if (user.role !== UserRole.ADMIN && restaurant.ownerId !== user.id) {
+      throw new Error('Forbidden: Not the owner');
+    }
+
     return restaurant.update({ isActive: false });
   }
 }
